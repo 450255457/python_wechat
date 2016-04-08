@@ -1,0 +1,7 @@
+<xml>
+<ToUserName><![CDATA[{{tousername}}]]></ToUserName>
+<FromUserName><![CDATA[{{fromusername}}]]></FromUserName>
+<CreateTime>{{str(int(time.time()))}}</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[{{result}}]]></Content>
+</xml>
