@@ -31,16 +31,10 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self): 
         body = self.request.body
         data = ET.fromstring(body)
-        tousername = data.find('ToUserName').text
-        fromusername = data.find('FromUserName').text
-        createtime = data.find('CreateTime').text
-        msgtype = data.find('MsgType').text
+        toUser = data.find('ToUserName').text
+        fromUser = data.find('FromUserName').text
+        msgType = data.find('MsgType').text
         content = data.find('Content').text
-        msgid = data.find('MsgId').text
-        if content.strip() in ('ls','pwd','w','uptime'):
-            result = commands.getoutput(content)
-        else:
-            result = 'test'
         textTpl = """<xml>
             <ToUserName><![CDATA[%s]]></ToUserName>
             <FromUserName><![CDATA[%s]]></FromUserName>
@@ -48,7 +42,7 @@ class MainHandler(tornado.web.RequestHandler):
             <MsgType><![CDATA[%s]]></MsgType>
             <Content><![CDATA[%s]]></Content>
             </xml>"""
-        out = textTpl % (fromusername, tousername, str(int(time.time())), msgtype, result)
+        out = textTpl % (fromUser, toUser, str(int(time.time())), msgType, content)
         self.write(out)
         
 application = tornado.web.Application([
