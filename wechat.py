@@ -35,6 +35,7 @@ class MainHandler(tornado.web.RequestHandler):
         fromUser = data.find('FromUserName').text
         msgType = data.find('MsgType').text
         content = data.find('Content').text
+        createTime = str(int(time.time()))
         #textTpl = """<xml>
         #    <ToUserName><![CDATA[%s]]></ToUserName>
         #    <FromUserName><![CDATA[%s]]></FromUserName>
@@ -44,7 +45,7 @@ class MainHandler(tornado.web.RequestHandler):
         #    </xml>"""
         # out = textTpl % (fromUser, toUser, str(int(time.time())), msgType, content)
         # self.write(out)
-        self.render('reply_text.html', toUser=toUser, fromUser=fromUser, content=content)
+        self.render('reply_text.html', toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
         
 application = tornado.web.Application([
     (r"/", MainHandler),
