@@ -36,15 +36,15 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         createTime = str(int(time.time()))
-        #textTpl = """<xml>
-        #    <ToUserName><![CDATA[%s]]></ToUserName>
-        #    <FromUserName><![CDATA[%s]]></FromUserName>
-        #    <CreateTime>%s</CreateTime>
-        #    <MsgType><![CDATA[%s]]></MsgType>
-        #    <Content><![CDATA[%s]]></Content>
-        #    </xml>"""
-        # out = textTpl % (fromUser, toUser, str(int(time.time())), msgType, content)
-        # self.write(out)
+        textTpl = """<xml>
+            <ToUserName><![CDATA[%s]]></ToUserName>
+            <FromUserName><![CDATA[%s]]></FromUserName>
+            <CreateTime>%s</CreateTime>
+            <MsgType><![CDATA[%s]]></MsgType>
+            <Content><![CDATA[%s]]></Content>
+            </xml>"""
+        out = textTpl % (fromUser, toUser, str(int(time.time())), msgType, content)
+        self.write(out)
         self.render('reply_text.html', toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
         
 application = tornado.web.Application([
