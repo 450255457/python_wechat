@@ -34,7 +34,7 @@ class MainHandler(tornado.web.RequestHandler):
         print ('data:%s' % data)
         toUser = data.find('ToUserName').text
         fromUser = data.find('FromUserName').text
-        createTime = int(time.time())
+        createTime = str(int(time.time()))
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
