@@ -31,18 +31,24 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self): 
         body = self.request.body
         data = ET.fromstring(body)
-        print ('data:%s' % data)
         toUser = data.find('ToUserName').text
         fromUser = data.find('FromUserName').text
-        createTime = str(int(time.time()))
+        createTime = int(time.time())
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
-        print ('createTime:%s' % createTime)
-        self.render("reply_text.html", toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
+        textTpl = """<xml>
+            <ToUserName><![CDATA[%s]]></ToUserName>
+            <FromUserName><![CDATA[%s]]></FromUserName>
+            <CreateTime>%s</CreateTime>
+            <MsgType><![CDATA[%s]]></MsgType>
+            <Content><![CDATA[%s]]></Content>
+            <MsgId>%s</MsgId>
+            </xml>"""
+        out = textTpl % (fromUser, toUser, createTime, msgType, content, msgId)
+        self.write(out)
 application = tornado.web.Application([
     (r"/", MainHandler),
-    (r"/reply_text", MainHandler),
 ])
 
 if __name__ == "__main__":
