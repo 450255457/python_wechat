@@ -41,7 +41,7 @@ class MainHandler(tornado.web.RequestHandler):
         self.render("reply_text.html", toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
 application = tornado.web.Application([
     (r"/", MainHandler),
-    #(r"/reply_text", MainHandler),
+    (r"/reply_text", MainHandler),
 ])
 
 if __name__ == "__main__":
