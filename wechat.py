@@ -6,7 +6,10 @@ import tornado.web
 import hashlib
 import xml.etree.ElementTree as ET
 import time
-#import os
+import os
+
+from tornado.options import define, options
+define("port", default=8000, help="run on the given port", type=int)
 
 def check_signature(signature, timestamp, nonce):
     args = []
@@ -44,15 +47,16 @@ class IndexHandler(tornado.web.RequestHandler):
             <Content><![CDATA[%s]]></Content>
             </xml>"""
         out = textTpl % (fromUser, toUser, str(int(time.time())), msgType, content)
-        self.write(out)
-        #self.render('reply_text.html', toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
-        
-application = tornado.web.Application([
-    (r"/", IndexHandler),
-    # (r'/reply_text', MainHandler)],
-])
+        # self.write(out)
+        self.render('reply_text.html', toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
 
 if __name__ == "__main__":
-    #template_path=os.path.join(os.path.dirname(__file__), "templates")
-    application.listen(80)
+    tornado.options.parse_command_line()
+    app = tornado.web.Application(
+        handlers=[(r'/', IndexHandler), 
+                  (r'/reply_text', IndexHandler)],
+        template_path=os.path.join(os.path.dirname(__file__), "templates")
+    )
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
