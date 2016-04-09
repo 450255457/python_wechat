@@ -71,9 +71,11 @@ class MainHandler(tornado.web.RequestHandler):
         msgId= data.find("MsgId").text
         if 'text' == msgType:
             if 'help' == content.lower():
-                content = u'''1.输入"translate"为中英翻译工具
+                content = u'''
+                1.输入"translate"为中英翻译工具
                 '''
-            # elif 'translate' == content:
+            elif type(content).__name__ == "unicode":
+                content = content.encode('UTF-8')
             content = translate(content)
             out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
         self.write(out)
