@@ -38,7 +38,7 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
-        
+        print ('createTime:%s' % createTime)
         self.render("reply_text.html", toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
 application = tornado.web.Application([
     (r"/", MainHandler),
