@@ -1,16 +1,11 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import hashlib
 import xml.etree.ElementTree as ET
 import time
-import os
-
-from tornado.options import define, options
-define("port", default=8000, help="run on the given port", type=int)
 
 def check_signature(signature, timestamp, nonce):
     args = []
@@ -22,7 +17,7 @@ def check_signature(signature, timestamp, nonce):
     mysig = hashlib.sha1(''.join(args)).hexdigest()
     return mysig == signature
 
-class IndexHandler(tornado.web.RequestHandler):
+class MainHandler(tornado.web.RequestHandler):
     def get(self):
         signature = self.get_argument('signature')
         timestamp = self.get_argument('timestamp')
@@ -37,27 +32,25 @@ class IndexHandler(tornado.web.RequestHandler):
         data = ET.fromstring(body)
         toUser = data.find('ToUserName').text
         fromUser = data.find('FromUserName').text
+        createTime = int(time.time())
         msgType = data.find('MsgType').text
         content = data.find('Content').text
-        createTime = str(int(time.time()))
+        msgId= data.find("MsgId").text
         textTpl = """<xml>
             <ToUserName><![CDATA[%s]]></ToUserName>
             <FromUserName><![CDATA[%s]]></FromUserName>
             <CreateTime>%s</CreateTime>
             <MsgType><![CDATA[%s]]></MsgType>
             <Content><![CDATA[%s]]></Content>
+            <MsgId>%s</MsgId>
             </xml>"""
-        out = textTpl % (fromUser, toUser, str(int(time.time())), msgType, content)
-        # self.write(out)
-        self.render('reply_text.html', toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
+        out = textTpl % (fromUser, toUser, createTime, msgType, content, msgId)
+        self.write(out)
+        # self.render('reply_text.html', toUser=toUser, fromUser=fromUser, createTime=createTime, content=content)
+application = tornado.web.Application([
+    (r"/", MainHandler),
+])
 
 if __name__ == "__main__":
-    tornado.options.parse_command_line()
-    app = tornado.web.Application(
-        handlers=[(r'/', IndexHandler), 
-                  (r'/reply_text', IndexHandler)],
-        template_path=os.path.join(os.path.dirname(__file__), "templates")
-    )
-    http_server = tornado.httpserver.HTTPServer(app)
-    http_server.listen(options.port)
+    application.listen(80)
     tornado.ioloop.IOLoop.instance().start()
