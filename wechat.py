@@ -31,6 +31,7 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self): 
         body = self.request.body
         data = ET.fromstring(body)
+        print ('data:%s' % data)
         toUser = data.find('ToUserName').text
         fromUser = data.find('FromUserName').text
         createTime = int(time.time())
