@@ -8,14 +8,15 @@ import xml.etree.ElementTree as ET
 import time
 
 def check_signature(signature, timestamp, nonce):
-    args = []
     # 微信公众平台里输入的token
-    args.append('linden')
-    args.append(timestamp)
-    args.append(nonce)
-    args.sort()
-    mysig = hashlib.sha1(''.join(args)).hexdigest()
-    return mysig == signature
+    token="linden"
+    #字典序排序
+    list = [token,timestamp,nonce]
+    list.sort()
+    sha1=hashlib.sha1()
+    map(sha1.update,list)
+    hashcode=sha1.hexdigest()
+    return hashcode == signature
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
