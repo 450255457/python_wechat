@@ -61,7 +61,7 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
-        print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" % (toUser,fromUser,createTime,msgId))
+        # print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" % (toUser,fromUser,createTime,msgId))
         response_text = """<xml>
             <ToUserName><![CDATA[%s]]></ToUserName>
             <FromUserName><![CDATA[%s]]></FromUserName>
@@ -74,7 +74,10 @@ class MainHandler(tornado.web.RequestHandler):
             'toUser': toUser,
             'fromUser': fromUser,
             'createTime': int(time.time()),
-            'content': 'HELLO!'
+            'msgType': msgType,
+            'reply': {
+                'content': 'HELLO!'
+            }
         }
         out = self.render_string('reply_text.xml', autoescape=None, **params)
         self.write(out)
