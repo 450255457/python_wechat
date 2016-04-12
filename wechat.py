@@ -69,7 +69,8 @@ class MainHandler(tornado.web.RequestHandler):
             <Content><![CDATA[%s]]></Content>
             <MsgId>%s</MsgId>
             </xml>"""
-        self.render("reply_text.xml", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
+        out = self.render("reply_text.xml", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
+        self.write(out)
         # out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
         # self.write(out)
         
