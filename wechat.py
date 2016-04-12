@@ -60,6 +60,7 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
+        print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" % (toUser,fromUser,createTime,msgId))
         response_text = """<xml>
             <ToUserName><![CDATA[%s]]></ToUserName>
             <FromUserName><![CDATA[%s]]></FromUserName>
@@ -68,20 +69,20 @@ class MainHandler(tornado.web.RequestHandler):
             <Content><![CDATA[%s]]></Content>
             <MsgId>%s</MsgId>
             </xml>"""
-        self.render("reply_text.html", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
+        self.render("reply_text.xml", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
         # out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
         # self.write(out)
         
-        if 'text' == msgType:
-            if 'help' == content.lower():
-                content = u'''
-                1.输入"translate"为中英翻译工具
-                '''
-            elif type(content).__name__ == "unicode":
-                content = content.encode('UTF-8')
-            content = translate(content)
-            out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
-        self.write(out)
+        #if 'text' == msgType:
+        #    if 'help' == content.lower():
+        #        content = u'''
+        #        1.输入"translate"为中英翻译工具
+        #        '''
+        #    elif type(content).__name__ == "unicode":
+        #        content = content.encode('UTF-8')
+        #    content = translate(content)
+        #    out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
+        # self.write(out)
 application = tornado.web.Application([
     (r"/", MainHandler),
 ])
