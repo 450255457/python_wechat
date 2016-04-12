@@ -73,8 +73,7 @@ class MainHandler(tornado.web.RequestHandler):
         #    elif type(content).__name__ == "unicode":
         #        content = content.encode('UTF-8')
         #    content = translate(content)
-        #    out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
-        #self.write(out)
+
 application = tornado.web.Application(
     handlers=[(r'/', MainHandler)],
     template_path=os.path.join(os.path.dirname(__file__), "templates"),

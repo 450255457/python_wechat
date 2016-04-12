@@ -109,3 +109,4 @@ $RECYCLE.BIN/
 *.lnk
 .pydevproject
 .project
+.settings/org.eclipse.core.resources.prefs
