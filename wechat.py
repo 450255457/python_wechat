@@ -7,6 +7,7 @@ import hashlib
 import xml.etree.ElementTree as ET
 import time
 import urllib2, json
+import os
  
 def translate(data):
     qword = urllib2.quote(data)
@@ -89,5 +90,6 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
+    template_path=os.path.join(os.path.dirname(__file__), "templates")
     application.listen(80)
     tornado.ioloop.IOLoop.instance().start()
