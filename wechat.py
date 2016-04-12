@@ -68,9 +68,9 @@ class MainHandler(tornado.web.RequestHandler):
             <Content><![CDATA[%s]]></Content>
             <MsgId>%s</MsgId>
             </xml>"""
-        # self.render("reply_text.html", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
-        out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
-        self.write(out)
+        self.render("reply_text.html", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
+        # out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
+        # self.write(out)
         
         if 'text' == msgType:
             if 'help' == content.lower():
