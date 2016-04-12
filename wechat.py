@@ -7,15 +7,6 @@ import hashlib
 import xml.etree.ElementTree as ET
 import time
 import urllib2, json
-
-response_text = """<xml>
-            <ToUserName><![CDATA[%s]]></ToUserName>
-            <FromUserName><![CDATA[%s]]></FromUserName>
-            <CreateTime>%s</CreateTime>
-            <MsgType><![CDATA[%s]]></MsgType>
-            <Content><![CDATA[%s]]></Content>
-            <MsgId>%s</MsgId>
-            </xml>"""
  
 def translate(data):
     qword = urllib2.quote(data)
@@ -69,6 +60,18 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
+        response_text = """<xml>
+            <ToUserName><![CDATA[%s]]></ToUserName>
+            <FromUserName><![CDATA[%s]]></FromUserName>
+            <CreateTime>%s</CreateTime>
+            <MsgType><![CDATA[%s]]></MsgType>
+            <Content><![CDATA[%s]]></Content>
+            <MsgId>%s</MsgId>
+            </xml>"""
+        # self.render("reply_text.html", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
+        out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
+        self.write(out)
+        
         if 'text' == msgType:
             if 'help' == content.lower():
                 content = u'''
