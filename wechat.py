@@ -7,6 +7,7 @@ import hashlib
 import xml.etree.ElementTree as ET
 import time
 import urllib2, json
+import os
  
 def translate(data):
     qword = urllib2.quote(data)
@@ -54,25 +55,15 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self): 
         body = self.request.body
         data = ET.fromstring(body)
-        fromUser = data.find('ToUserName').text
-        toUser = data.find('FromUserName').text
+        toUser = data.find('ToUserName').text
+        fromUser = data.find('FromUserName').text
         createTime = int(time.time())
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
         # print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" %
-        
-        self.render('reply_text.xml',fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
-        response_text = """<xml>
-            <ToUserName><![CDATA[%s]]></ToUserName>
-            <FromUserName><![CDATA[%s]]></FromUserName>
-            <CreateTime>%s</CreateTime>
-            <MsgType><![CDATA[%s]]></MsgType>
-            <Content><![CDATA[%s]]></Content>
-            <MsgId>%s</MsgId>
-            </xml>"""
-        #out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
-        #self.write(out)
+        # from与to在返回的时候要交换
+        self.render('reply_text.html',fromUser=toUser,toUser=fromUser,createTime=createTime,content=content)
         
         #if 'text' == msgType:
         #    if 'help' == content.lower():
@@ -84,9 +75,12 @@ class MainHandler(tornado.web.RequestHandler):
         #    content = translate(content)
         #    out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
         #self.write(out)
-application = tornado.web.Application([
-    (r"/", MainHandler),
-])
+application = tornado.web.Application(
+    handlers=[(r'/', MainHandler)],
+    template_path=os.path.join(os.path.dirname(__file__), "templates"),
+    static_path=os.path.join(os.path.dirname(__file__), "static"),
+    debug=True
+)
 
 if __name__ == "__main__":
     application.listen(80)
