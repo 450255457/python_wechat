@@ -7,7 +7,6 @@ import hashlib
 import xml.etree.ElementTree as ET
 import time
 import urllib2, json
-import os
  
 def translate(data):
     qword = urllib2.quote(data)
@@ -55,13 +54,15 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self): 
         body = self.request.body
         data = ET.fromstring(body)
-        toUser = data.find('ToUserName').text
-        fromUser = data.find('FromUserName').text
+        fromUser = data.find('ToUserName').text
+        toUser = data.find('FromUserName').text
         createTime = int(time.time())
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         msgId= data.find("MsgId").text
-        # print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" % (toUser,fromUser,createTime,msgId))
+        # print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" %
+        
+        self.render('reply_text.xml',fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
         response_text = """<xml>
             <ToUserName><![CDATA[%s]]></ToUserName>
             <FromUserName><![CDATA[%s]]></FromUserName>
@@ -70,21 +71,8 @@ class MainHandler(tornado.web.RequestHandler):
             <Content><![CDATA[%s]]></Content>
             <MsgId>%s</MsgId>
             </xml>"""
-        params = {
-            'toUser': toUser,
-            'fromUser': fromUser,
-            'createTime': int(time.time()),
-            'msgType': msgType,
-            'reply': {
-                'content': 'HELLO!'
-            }
-        }
-        out = self.render_string('reply_text.xml', autoescape=None, **params)
-        self.write(out)
-        # self.render("reply_text.xml", fromUser=fromUser,toUser=toUser,createTime=createTime,content=content)
-        
-        # out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
-        # self.write(out)
+        #out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
+        #self.write(out)
         
         #if 'text' == msgType:
         #    if 'help' == content.lower():
@@ -95,12 +83,11 @@ class MainHandler(tornado.web.RequestHandler):
         #        content = content.encode('UTF-8')
         #    content = translate(content)
         #    out = response_text % (fromUser, toUser, createTime, msgType, content, msgId)
-        # self.write(out)
+        #self.write(out)
 application = tornado.web.Application([
     (r"/", MainHandler),
 ])
 
 if __name__ == "__main__":
-    template_path=os.path.join(os.path.dirname(__file__), "templates")
     application.listen(80)
     tornado.ioloop.IOLoop.instance().start()
