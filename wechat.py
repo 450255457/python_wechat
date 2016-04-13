@@ -63,7 +63,12 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         # msgId= data.find("MsgId").text
-        print(msgType)
+
+        if 'text' == msgType:
+            content = translate(content)
+        if type(content).__name__ == "unicode":
+            content = content.encode('UTF-8')
+            
         # from与to在返回的时候要交换
         params = {
             'toUser': fromUser,
@@ -74,17 +79,7 @@ class MainHandler(tornado.web.RequestHandler):
                 'content': content
             }
         }
-        
         self.render('message_reply.html',**params)
-        
-        #if 'text' == msgType:
-        #    if 'help' == content.lower():
-        #        content = u'''
-        #        1.输入"translate"为中英翻译工具
-        #        '''
-        #    elif type(content).__name__ == "unicode":
-        #        content = content.encode('UTF-8')
-        #    content = translate(content)
 
 application = tornado.web.Application(
     handlers=[(r'/', MainHandler)],
