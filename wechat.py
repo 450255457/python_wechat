@@ -32,15 +32,17 @@ def translate(data):
         return u'对不起，您输入的单词%s无法翻译,请检查拼写'% data
             
 def check_signature(signature, timestamp, nonce):
+    if not signature or not timestamp or not nonce:
+            return False
     # 微信公众平台里输入的token
     token="linden"
     #字典序排序
-    list = [token,timestamp,nonce]
-    list.sort()
-    sha1=hashlib.sha1()
-    map(sha1.update,list)
-    hashcode=sha1.hexdigest()
-    return hashcode == signature
+    tmp_list = [token,timestamp,nonce]
+    tmp_list.sort()
+    tmp_str = ''.join(tmp_list)
+    if signature != hashlib.sha1(tmp_str.encode('utf-8')).hexdigest():
+        return False
+    return True
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -60,10 +62,19 @@ class MainHandler(tornado.web.RequestHandler):
         createTime = int(time.time())
         msgType = data.find('MsgType').text
         content = data.find('Content').text
-        msgId= data.find("MsgId").text
-        # print ("ToUserName:%s,FromUserName:%sCreateTime:%s,MsgId:%s" %
+        # msgId= data.find("MsgId").text
         # from与to在返回的时候要交换
-        self.render('reply_text.html',fromUser=toUser,toUser=fromUser,createTime=createTime,content=content)
+        params = {
+            'toUser': fromUser,
+            'fromUser': toUser,
+            'createTime': createTime,
+            'msgType': msgType,
+            'reply': {
+                'content': content
+            }
+        }
+        
+        self.render('message_reply.html',**params)
         
         #if 'text' == msgType:
         #    if 'help' == content.lower():
