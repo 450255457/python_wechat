@@ -63,6 +63,7 @@ class MainHandler(tornado.web.RequestHandler):
         msgType = data.find('MsgType').text
         content = data.find('Content').text
         # msgId= data.find("MsgId").text
+        print(msgType)
         # from与to在返回的时候要交换
         params = {
             'toUser': fromUser,
