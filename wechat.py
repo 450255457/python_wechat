@@ -8,44 +8,7 @@ import xml.etree.ElementTree as ET
 import time
 import urllib2, json
 import os
-
-import access_token_server
-import menus
-access_token_manager = access_token_server.AccessTokenManager()
-menus_to_set = {
-     "button":[
-     {    
-          "type":"click",
-          "name":"今日歌曲",
-          "key":"V1001_TODAY_MUSIC"
-      },
-      {
-           "name":"菜单",
-           "sub_button":[
-           {    
-               "type":"view",
-               "name":"搜索",
-               "url":"http://www.soso.com/"
-            },
-            {
-               "type":"view",
-               "name":"视频",
-               "url":"http://v.qq.com/"
-            },
-            {
-               "type":"click",
-               "name":"赞一下我们",
-               "key":"V1001_GOOD"
-            }]
-       }]
-}
-
-# 微信公众平台里输入的token
-token = "linden"
-AppID = 'wx3c6944e7541cf4e0'
-AppSecret = 'ebf3493166f6c164f7cfd0f63647f90c'
-access_token_url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + AppID + '&secret=' + AppSecret
-     
+ 
 def translate(data):
     qword = urllib2.quote(data)
     baseurl = r'http://fanyi.youdao.com/openapi.do?keyfrom=linden&key=1102672932&type=data&doctype=json&version=1.1&q='
@@ -71,6 +34,8 @@ def translate(data):
 def check_signature(signature, timestamp, nonce):
     if not signature or not timestamp or not nonce:
             return False
+    # 微信公众平台里输入的token
+    token="linden"
     #字典序排序
     tmp_list = [token,timestamp,nonce]
     tmp_list.sort()
@@ -118,7 +83,6 @@ class MainHandler(tornado.web.RequestHandler):
 
 application = tornado.web.Application(
     handlers=[(r'/', MainHandler)],
-    (r'/menus', menus.MenuSetupHandler, dict(access_token_manager=access_token_manager, menus=menus_to_set)),
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
     static_path=os.path.join(os.path.dirname(__file__), "static"),
     debug=True
